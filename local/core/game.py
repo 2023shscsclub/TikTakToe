@@ -8,10 +8,10 @@ class GamePlay:
 
     def player_move(self, row, col):
         if row not in range(3) or col not in range(3):
-            print('Invalid Move')
+            print('That space is not in the board')
             return False
         if self.board[row][col] != '_':
-            print('Invalid Move')
+            print('It`s already taken')
             return False
         self.board[row][col] = 'O'
         self.check_winner()
@@ -22,6 +22,7 @@ class GamePlay:
         if move:
             if random.randint(0, 1) == 0:
                 self.board[move[0]][move[1]] = 'X'
+                return
         possible_moves = []
         for i in range(3):
             for j in range(3):
@@ -66,9 +67,11 @@ class GamePlay:
         for j in range(3):
             if self.board[j][0] == self.board[j][1] == self.board[j][2] != '_':
                 self.winner = self.board[j][0]
+                return
         for i in range(3):
             if self.board[0][i] == self.board[1][i] == self.board[2][i] != '_':
                 self.winner = self.board[0][i]
+                return
         if self.board[0][0] == self.board[1][1] == self.board[2][2] != '_':
             self.winner = self.board[0][0]
         elif self.board[0][2] == self.board[1][1] == self.board[2][0] != '_':
@@ -77,11 +80,12 @@ class GamePlay:
             self.winner = 'Draw'
         else:
             self.winner = None
+        return
 
 
 if __name__ == '__main__':
     game = GamePlay()
-    while game.winner is None:
+    while True:
         while True:
             space = input('Enter space(1 ~ 9): ')
             row = (int(space) - 1) // 3
@@ -91,10 +95,14 @@ if __name__ == '__main__':
         for i in range(3):
             print(*game.board[i])
         print()
+        if game.winner is not None:
+            break
         game.computer_move()
         for i in range(3):
             print(*game.board[i])
         print()
+        if game.winner is not None:
+            break
     match game.winner:
         case 'O':
             print('You Win')
