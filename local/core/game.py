@@ -6,7 +6,7 @@ class GamePlay:
         self.board = [['_' for i in range(3)] for j in range(3)]
         self.winner = None
 
-    def player_move(self, row, col):
+    def player_move(self, row: int, col: int):
         if row not in range(3) or col not in range(3):
             print('That space is not in the board')
             return False
@@ -103,10 +103,9 @@ if __name__ == '__main__':
         print()
         if game.winner is not None:
             break
-    match game.winner:
-        case 'O':
-            print('You Win')
-        case 'X':
-            print('You Lose')
-        case 'Draw':
-            print('Draw')
+    if game.winner == 'Draw':
+        print('Draw')
+    elif game.winner == 'O':
+        print('You win')
+    else:
+        print('You lose')
