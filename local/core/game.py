@@ -1,8 +1,10 @@
 import random
+import asyncio
 
 
 class GamePlay:
-    def __init__(self):
+    def __init__(self, robot_control):
+        self.robot_control = robot_control
         self.board = [['_' for i in range(3)] for j in range(3)]
         self.winner = None
 
@@ -20,8 +22,10 @@ class GamePlay:
     def computer_move(self):
         move = self.find_possible_win()
         if move:
-            if random.randint(0, 1) == 0:
+            if random.randint(0, 9) == 0:
                 self.board[move[0]][move[1]] = 'X'
+                asyncio.run(self.robot_control.move(move[0] * 3 + move[1] + 1))
+                self.check_winner()
                 return
         possible_moves = []
         for i in range(3):
@@ -31,6 +35,7 @@ class GamePlay:
         if possible_moves:
             move = random.choice(possible_moves)
             self.board[move[0]][move[1]] = 'X'
+            asyncio.run(self.robot_control.move(move[0] * 3 + move[1] + 1))
         self.check_winner()
 
     def find_possible_win(self):
@@ -82,30 +87,30 @@ class GamePlay:
             self.winner = None
         return
 
-
-if __name__ == '__main__':
-    game = GamePlay()
-    while True:
-        while True:
-            space = input('Enter space(1 ~ 9): ')
-            row = (int(space) - 1) // 3
-            col = (int(space) - 1) % 3
-            if game.player_move(row, col):
-                break
-        for i in range(3):
-            print(*game.board[i])
-        print()
-        if game.winner is not None:
-            break
-        game.computer_move()
-        for i in range(3):
-            print(*game.board[i])
-        print()
-        if game.winner is not None:
-            break
-    if game.winner == 'Draw':
-        print('Draw')
-    elif game.winner == 'O':
-        print('You win')
-    else:
-        print('You lose')
+#
+# if __name__ == '__main__':
+#     game = GamePlay()
+#     while True:
+#         while True:
+#             space = input('Enter space(1 ~ 9): ')
+#             row = (int(space) - 1) // 3
+#             col = (int(space) - 1) % 3
+#             if game.player_move(row, col):
+#                 break
+#         for i in range(3):
+#             print(*game.board[i])
+#         print()
+#         if game.winner is not None:
+#             break
+#         game.computer_move()
+#         for i in range(3):
+#             print(*game.board[i])
+#         print()
+#         if game.winner is not None:
+#             break
+#     if game.winner == 'Draw':
+#         print('Draw')
+#     elif game.winner == 'O':
+#         print('You win')
+#     else:
+#         print('You lose')

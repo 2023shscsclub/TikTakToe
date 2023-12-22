@@ -1,6 +1,6 @@
 import Arm_Lib
 import json
-import time
+import asyncio
 
 
 class RobotControl:
@@ -10,19 +10,18 @@ class RobotControl:
         self.robot = Arm_Lib.Arm_Device()
         pass
 
-    def move(self, number: int):
+    async def move(self, number: int):
         self.robot.Arm_serial_servo_write6(*self.coordinates["standby" + str(self.standby_number)], 180, 600)
-        time.sleep(0.6)
+        await asyncio.sleep(0.6)
         self.robot.Arm_serial_servo_write6(*self.coordinates["standby" + str(self.standby_number)], 0, 600)
-        time.sleep(0.6)
+        await asyncio.sleep(0.6)
         self.robot.Arm_serial_servo_write6(*self.coordinates["board" + str(number)], 0, 600)
-        time.sleep(0.6)
+        await asyncio.sleep(0.6)
         self.robot.Arm_serial_servo_write6(*self.coordinates["board" + str(number)], 180, 600)
-        time.sleep(0.6)
+        await asyncio.sleep(0.6)
         self.robot.Arm_serial_servo_write6(90, 90, 90, 90, 90, 0, 600)
-        time.sleep(0.6)
+        await asyncio.sleep(0.6)
         self.standby_number += 1
-        pass
 
 
 if __name__ == '__main__':

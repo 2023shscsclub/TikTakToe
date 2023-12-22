@@ -5,9 +5,13 @@ from core.robot_control import RobotControl
 
 class Main:
     def __init__(self):
-        game = GamePlay()
-        cognition = Cognition()
         robot_control = RobotControl()
+        game = GamePlay(robot_control)
+        cognition = Cognition(game)
+        self.run()
+
+    def run(self):
+        pass
 
 
 if __name__ == '__main__':
