@@ -3,10 +3,32 @@ import asyncio
 
 
 class GamePlay:
-    def __init__(self, robot_control):
+    def __init__(self, robot_control, cognition):
         self.robot_control = robot_control
+        self.cognition = cognition
         self.board = [['_' for i in range(3)] for j in range(3)]
         self.winner = None
+
+    def print_board(self):
+        for i in range(3):
+            print(*self.board[i])
+        print()
+
+    async def player_move_cognition(self):
+        current_locations = []
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j] == "O":
+                    current_locations.append(i*3+j+1)
+        while True:
+            self.cognition.get_locations_on_board()
+            if len(self.cognition.player_locations) > len(current_locations):
+                break
+        for location in self.cognition.player_locations:
+            if location in current_locations:
+                continue
+            self.player_move(*divmod(location - 1, 3))
+            break
 
     def player_move(self, row: int, col: int):
         if row not in range(3) or col not in range(3):
@@ -24,7 +46,7 @@ class GamePlay:
         if move:
             if random.randint(0, 9) == 0:
                 self.board[move[0]][move[1]] = 'X'
-                asyncio.run(self.robot_control.move(move[0] * 3 + move[1] + 1))
+                self.robot_control.move(move[0] * 3 + move[1] + 1)
                 self.check_winner()
                 return
         possible_moves = []
@@ -35,7 +57,7 @@ class GamePlay:
         if possible_moves:
             move = random.choice(possible_moves)
             self.board[move[0]][move[1]] = 'X'
-            asyncio.run(self.robot_control.move(move[0] * 3 + move[1] + 1))
+            self.robot_control.move(move[0] * 3 + move[1] + 1)
         self.check_winner()
 
     def find_possible_win(self):
@@ -86,6 +108,22 @@ class GamePlay:
         else:
             self.winner = None
         return
+    
+    async def play(self):
+        while not self.winner:
+            print('Your turn')
+            await self.player_move_cognition()
+            self.print_board()
+            print('Computer`s turn')
+            self.computer_move()
+            self.print_board()
+        if self.winner == 'O':
+            print('You win')
+        elif self.winner == 'X':
+            print('You lose')
+        else:
+            print('Draw')
+
 
 #
 # if __name__ == '__main__':

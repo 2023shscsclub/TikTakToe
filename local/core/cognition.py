@@ -4,33 +4,26 @@ import asyncio
 
 
 class Cognition:
-    def __init__(self, game):
-        self.game = game
+    def __init__(self):
         self.camera = cv2.VideoCapture(0)
         self.camera_rgb = np.ndarray(shape=(480, 640, 3), dtype=np.uint8)
+        self.player_locations = []
 
-    async def get_image(self):
-        while True:
-            ret, frame = self.camera.read()
-            self.camera_rgb = frame
-            await asyncio.sleep(0.1)
+    def get_image(self):
+        _, frame = self.camera.read()
+        self.camera_rgb = frame
 
     def get_coordinates(self):
-        hsv = cv2.cvtColor(self.camera_rgb, cv2.COLOR_BGR2HSV)
-        lower = np.array([0, 0, 0])
-        upper = np.array([255, 255, 255])
-        mask = cv2.inRange(hsv, lower, upper)
-        res = cv2.bitwise_and(self.camera_rgb, self.camera_rgb, mask=mask)
-        gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
-        ret, thresh = cv2.threshold(gray, 127, 255, 0)
-        contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         coordinates = []
-        for contour in contours:
+        hsv = cv2.cvtColor(self.camera_rgb, cv2.COLOR_BGR2HSV)
+        red_lower = np.array([0, 100, 100])
+        red_upper = np.array([10, 255, 255])
+        red_mask = cv2.inRange(hsv, red_lower, red_upper)
+        red_contours, _ = cv2.findContours(red_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        for contour in red_contours:
             if cv2.contourArea(contour) > 1000:
-                M = cv2.moments(contour)
-                cx = int(M['m10'] / M['m00'])
-                cy = int(M['m01'] / M['m00'])
-                coordinates.append((cx, cy))
+                x, y, w, h = cv2.boundingRect(contour)
+                coordinates.append((x + w // 2, y + h // 2))
         return coordinates
 
     @staticmethod
@@ -57,9 +50,10 @@ class Cognition:
             else:
                 return 9
 
-    def locations_on_board(self):
+    def get_locations_on_board(self):
+        self.get_image()
         coordinates = self.get_coordinates()
-        locations = []
+        self.player_locations = []
         for coordinate in coordinates:
-            locations.append(self.location_on_board(coordinate))
-        return locations
+            self.player_locations.append(self.location_on_board(coordinate))
+        self.player_locations = list(set(self.player_locations))
