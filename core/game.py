@@ -1,12 +1,13 @@
 import random
-import asyncio
+import time
 
 
 class GamePlay:
-    def __init__(self, robot_control, cognition):
+    def __init__(self, robot_control, cognition, server):
         self.robot_control = robot_control
         self.cognition = cognition
-        self.board = [['_' for i in range(3)] for j in range(3)]
+        self.server = server
+        self.board = [['_' for _ in range(3)] for _ in range(3)]
         self.winner = None
 
     def print_board(self):
@@ -14,7 +15,7 @@ class GamePlay:
             print(*self.board[i])
         print()
 
-    async def player_move_cognition(self):
+    def player_move_cognition(self):
         current_locations = []
         for i in range(3):
             for j in range(3):
@@ -23,7 +24,9 @@ class GamePlay:
         while True:
             self.cognition.get_locations_on_board()
             if len(self.cognition.player_locations) > len(current_locations):
-                break
+                time.sleep(3)
+                if len(self.cognition.player_locations) > len(current_locations):
+                    break
         for location in self.cognition.player_locations:
             if location in current_locations:
                 continue
@@ -38,6 +41,7 @@ class GamePlay:
             print('It`s already taken')
             return False
         self.board[row][col] = 'O'
+        self.server.update_game(self.board)
         self.check_winner()
         return True
 
@@ -46,6 +50,7 @@ class GamePlay:
         if move:
             if random.randint(0, 9) == 0:
                 self.board[move[0]][move[1]] = 'X'
+                self.server.update_game(self.board)
                 self.robot_control.move(move[0] * 3 + move[1] + 1)
                 self.check_winner()
                 return
@@ -57,6 +62,7 @@ class GamePlay:
         if possible_moves:
             move = random.choice(possible_moves)
             self.board[move[0]][move[1]] = 'X'
+            self.server.update_game(self.board)
             self.robot_control.move(move[0] * 3 + move[1] + 1)
         self.check_winner()
 
@@ -109,10 +115,10 @@ class GamePlay:
             self.winner = None
         return
     
-    async def play(self):
+    def play(self):
         while not self.winner:
             print('Your turn')
-            await self.player_move_cognition()
+            self.player_move_cognition()
             self.print_board()
             print('Computer`s turn')
             self.computer_move()
