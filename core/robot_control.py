@@ -5,7 +5,7 @@ import time
 
 class RobotControl:
     def __init__(self):
-        self.coordinates = json.load(open('local/coordinates.json'))
+        self.coordinates = json.load(open('coordinates.json'))
         self.standby_number = 1
         self.robot = Arm_Lib.Arm_Device()
         pass

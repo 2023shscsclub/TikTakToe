@@ -27,26 +27,26 @@ class Cognition:
 
     @staticmethod
     def location_on_board(coordinate):
-        if coordinate[0] < 213:
-            if coordinate[1] < 160:
+        if 880<= coordinate[0] < 1220:
+            if 40 <= coordinate[1] < 320:
                 return 1
-            elif coordinate[1] < 320:
+            elif 320 <= coordinate[1] < 590:
                 return 4
-            else:
+            elif 590 <= coordinate[1] < 860:
                 return 7
-        elif coordinate[0] < 426:
-            if coordinate[1] < 160:
+        elif 1220 <= coordinate[0] < 1540:
+            if 40<= coordinate[1] < 320:
                 return 2
-            elif coordinate[1] < 320:
+            elif 320 <= coordinate[1] < 590:
                 return 5
-            else:
+            elif 590 <= coordinate[1] < 860:
                 return 8
-        else:
-            if coordinate[1] < 160:
+        elif 1540 <= coordinate[0] < 1850:
+            if 40 <= coordinate[1] < 320:
                 return 3
-            elif coordinate[1] < 320:
+            elif 320 <= coordinate[1] < 590:
                 return 6
-            else:
+            elif 590 <= coordinate[1] < 860:
                 return 9
 
     def get_locations_on_board(self):

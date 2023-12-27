@@ -27,6 +27,7 @@ class GamePlay:
             while True:
                 if len(self.cognition.player_locations) > len(current_locations):
                     time.sleep(3)
+                    self.cognition.get_locations_on_board()
                     if len(self.cognition.player_locations) > len(current_locations):
                         break
             for location in self.cognition.player_locations:
