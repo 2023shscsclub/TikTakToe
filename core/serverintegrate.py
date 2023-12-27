@@ -3,8 +3,9 @@ import random
 
 
 class ServerIntegrate:
-    def __init__(self):
-        self.URL = "https://mbp16.ez0.us/csclub/tiktaktoe/"
+    def __init__(self, main):
+        self.game = main.game
+        self.URL = "https://mbp16.ez0.us/csclub/tiktaktoe?data=all"
         self.code = None
 
     def get_previous_game(self):
@@ -16,10 +17,13 @@ class ServerIntegrate:
         requests.post(self.URL, json={"code": self.code, "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]]})
         return
 
-    def update_game(self, board):
-        requests.put(self.URL, json={"code": self.code, "board": board})
+    def update_game(self):
+        requests.put(self.URL, json={"code": self.code, "board": self.game.board, "winner": self.game.winner})
         return
 
     def end_game(self):
         requests.delete(self.URL, json={"code": self.code})
         return
+
+    def check_nick(self):
+        return requests.get(f"https://mbp16.ez0.us/csclub/tiktaktoe?data=only&code={self.code}")["nickname"] is not None
