@@ -46,7 +46,7 @@ class GamePlay:
             return False
         self.board[row][col] = 'O'
         self.check_winner()
-        self.server.update_game()
+        self.server.update_game("computer")
         return True
 
     def computer_move(self):
@@ -56,14 +56,14 @@ class GamePlay:
                 if i[2] == "X":
                     self.board[i[0]][i[1]] = 'X'
                     self.check_winner()
-                    self.server.update_game()
+                    self.server.update_game("player")
                     self.robot_control.move(i[0] * 3 + i[1] + 1)
                     return
             move = random.choice(move)
             if random.randint(0, 9) != 0:
                 self.board[move[0]][move[1]] = 'X'
                 self.check_winner()
-                self.server.update_game()
+                self.server.update_game("player")
                 self.robot_control.move(move[0] * 3 + move[1] + 1)
                 return
         possible_moves = []
@@ -75,11 +75,11 @@ class GamePlay:
             move = random.choice(possible_moves)
             self.board[move[0]][move[1]] = 'X'
             self.check_winner()
-            self.server.update_game()
+            self.server.update_game("player")
             self.robot_control.move(move[0] * 3 + move[1] + 1)
         else:
             self.check_winner()
-            self.server.update_game()
+            self.server.update_game("player")
 
     def find_possible_wins(self):
         possible_wins = []

@@ -16,11 +16,13 @@ class ServerIntegrate:
         self.game = self.main.game
         while self.code is None or self.code in [game["code"] for game in self.get_previous_game()]:
             self.code = random.randint(100000, 999999)
-        requests.post(self.URL, json={"code": self.code, "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]]})
+        requests.post(self.URL, json={"code": self.code, "board": [["_", "_", "_"], ["_", "_", "_"], ["_", "_", "_"]],
+                                      "turn": "player"})
         return
 
-    def update_game(self):
-        requests.put(self.URL, json={"code": self.code, "board": self.game.board, "winner": self.game.winner})
+    def update_game(self, turn: str):
+        requests.put(self.URL, json={"code": self.code, "board": self.game.board, "winner": self.game.winner,
+                                     "turn": turn})
         return
 
     def end_game(self):

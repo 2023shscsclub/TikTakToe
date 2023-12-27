@@ -20,7 +20,7 @@ class Main:
                 break
             time.sleep(3)
         self.game.play()
-        self.server.update_game()
+        self.server.update_game("None")
         self.server.end_game()
 
 
