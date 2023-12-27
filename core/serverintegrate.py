@@ -5,11 +5,11 @@ import random
 class ServerIntegrate:
     def __init__(self, main):
         self.game = main.game
-        self.URL = "https://mbp16.ez0.us/csclub/tiktaktoe?data=all"
+        self.URL = "https://mbp16.ez0.us/csclub/tiktaktoe/"
         self.code = None
 
     def get_previous_game(self):
-        return requests.get(self.URL).json()
+        return requests.get(self.URL, params={"data": "all"}).json()
 
     def create_new_game(self):
         while self.code is None or self.code in [game["code"] for game in self.get_previous_game()]:
@@ -26,4 +26,5 @@ class ServerIntegrate:
         return
 
     def check_nick(self):
-        return requests.get(f"https://mbp16.ez0.us/csclub/tiktaktoe?data=only&code={self.code}")["nickname"] is not None
+        return requests.get(self.URL, params={"data": "only", "code": self.code}).json(
+        )[0]["nickname"] is not None
